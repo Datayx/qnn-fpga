@@ -1,0 +1,61 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (lin64) Build 6511674 Tue Jun 16 11:01:26 MDT 2026
+| Date         : Wed Nov  4 18:59:43 2026
+| Host         : Lenovo running 64-bit Ubuntu 24.04.2 LTS
+| Command      : report_utilization -hierarchical -file /mnt/c/Users/Yizi/Documents/qnn-fpga/deploy/overlay/utilization_hier.rpt
+| Design       : qnn_wrapper
+| Device       : xck26-sfvc784-2LV-c
+| Speed File   : -2LV
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+------------+------------+---------+------+------+--------+--------+------+------------+
+|                                         Instance                                        |                                                  Module                                                  | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | URAM | DSP Blocks |
++-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+------------+------------+---------+------+------+--------+--------+------+------------+
+| qnn_wrapper                                                                             |                                                                                                    (top) |      15479 |      15478 |       0 |    1 | 4666 |      0 |      4 |    0 |          5 |
+|   qnn_i                                                                                 |                                                                                                      qnn |      15479 |      15478 |       0 |    1 | 4666 |      0 |      4 |    0 |          5 |
+|     smc                                                                                 |                                                                                                qnn_smc_0 |        491 |        491 |       0 |    0 |  490 |      0 |      0 |    0 |          0 |
+|       inst                                                                              |                                                                                        qnn_smc_0_bd_02bc |        491 |        491 |       0 |    0 |  490 |      0 |      0 |    0 |          0 |
+|         sc_ul                                                                           |                                                                                qnn_smc_0_bd_02bc_sc_ul_0 |        491 |        491 |       0 |    0 |  490 |      0 |      0 |    0 |          0 |
+|           inst                                                                          |                                                                        qnn_smc_0_sc_ultralite_v1_0_1_top |        491 |        491 |       0 |    0 |  490 |      0 |      0 |    0 |          0 |
+|             gen_axi_full_nxm.sasd_inst                                                  |                                                                  qnn_smc_0_sc_ultralite_v1_0_1_sasd_lite |        491 |        491 |       0 |    0 |  488 |      0 |      0 |    0 |          0 |
+|               (gen_axi_full_nxm.sasd_inst)                                              |                                                                  qnn_smc_0_sc_ultralite_v1_0_1_sasd_lite |        150 |        150 |       0 |    0 |  285 |      0 |      0 |    0 |          0 |
+|               gen_read.arctrl_mux                                                       |                                                    qnn_smc_0_sc_ultralite_v1_0_1_mux_hot__parameterized5 |        137 |        137 |       0 |    0 |   13 |      0 |      0 |    0 |          0 |
+|               gen_read.rdata_mux                                                        |                                                   qnn_smc_0_sc_ultralite_v1_0_1_mux_hot__parameterized10 |         58 |         58 |       0 |    0 |   32 |      0 |      0 |    0 |          0 |
+|               gen_write.awctrl_mux                                                      |                                                  qnn_smc_0_sc_ultralite_v1_0_1_mux_hot__parameterized5_2 |         62 |         62 |       0 |    0 |   13 |      0 |      0 |    0 |          0 |
+|     axi_gpio_0                                                                          |                                                                                         qnn_axi_gpio_0_0 |        111 |        111 |       0 |    0 |  320 |      0 |      0 |    0 |          0 |
+|       U0                                                                                |                                                                                qnn_axi_gpio_0_0_axi_gpio |        111 |        111 |       0 |    0 |  320 |      0 |      0 |    0 |          0 |
+|         gpio_core_1                                                                     |                                                                               qnn_axi_gpio_0_0_GPIO_Core |         35 |         35 |       0 |    0 |  228 |      0 |      0 |    0 |          0 |
+|           (gpio_core_1)                                                                 |                                                                               qnn_axi_gpio_0_0_GPIO_Core |         35 |         35 |       0 |    0 |  100 |      0 |      0 |    0 |          0 |
+|           Dual.INPUT_DOUBLE_REGS5                                                       |                                                    qnn_axi_gpio_0_0_xpm_cdc_array_single__parameterized1 |          0 |          0 |       0 |    0 |  128 |      0 |      0 |    0 |          0 |
+|         AXI_LITE_IPIF_I                                                                 |                                                                           qnn_axi_gpio_0_0_axi_lite_ipif |         76 |         76 |       0 |    0 |   58 |      0 |      0 |    0 |          0 |
+|           I_SLAVE_ATTACHMENT                                                            |                                                                        qnn_axi_gpio_0_0_slave_attachment |         76 |         76 |       0 |    0 |   58 |      0 |      0 |    0 |          0 |
+|             (I_SLAVE_ATTACHMENT)                                                        |                                                                        qnn_axi_gpio_0_0_slave_attachment |         18 |         18 |       0 |    0 |   52 |      0 |      0 |    0 |          0 |
+|             I_DECODER                                                                   |                                                                         qnn_axi_gpio_0_0_address_decoder |         58 |         58 |       0 |    0 |    6 |      0 |      0 |    0 |          0 |
+|               (I_DECODER)                                                               |                                                                         qnn_axi_gpio_0_0_address_decoder |         57 |         57 |       0 |    0 |    6 |      0 |      0 |    0 |          0 |
+|     qnn_axi_0                                                                           |                                                                                          qnn_qnn_axi_0_0 |      14856 |      14856 |       0 |    0 | 3784 |      0 |      4 |    0 |          5 |
+|       inst                                                                              |                                                                                  qnn_qnn_axi_0_0_qnn_axi |      14856 |      14856 |       0 |    0 | 3784 |      0 |      4 |    0 |          5 |
+|         (inst)                                                                          |                                                                                  qnn_qnn_axi_0_0_qnn_axi |         16 |         16 |       0 |    0 |  254 |      0 |      0 |    0 |          0 |
+|         ctrl_s_axi_U                                                                    |                                                                       qnn_qnn_axi_0_0_qnn_axi_ctrl_s_axi |        293 |        293 |       0 |    0 |  301 |      0 |      0 |    0 |          0 |
+|         grp_myproject_fu_153                                                            |                                                                        qnn_qnn_axi_0_0_qnn_axi_myproject |      14547 |      14547 |       0 |    0 | 3229 |      0 |      4 |    0 |          5 |
+|           (grp_myproject_fu_153)                                                        |                                                                        qnn_qnn_axi_0_0_qnn_axi_myproject |        429 |        429 |       0 |    0 |  651 |      0 |      0 |    0 |          0 |
+|           grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_25_12_5_3_0_config2_s_fu_146   |                 qnn_qnn_axi_0_0_qnn_axi_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_25_12_5_3_0_config2_s |       8104 |       8104 |       0 |    0 | 1239 |      0 |      0 |    0 |          0 |
+|           grp_dense_latency_ap_ufixed_4_0_4_0_0_ap_fixed_14_7_5_3_0_config5_s_fu_216    |                  qnn_qnn_axi_0_0_qnn_axi_dense_latency_ap_ufixed_4_0_4_0_0_ap_fixed_14_7_5_3_0_config5_s |       4867 |       4867 |       0 |    0 | 1035 |      0 |      0 |    0 |          0 |
+|           grp_dense_latency_ap_ufixed_4_0_4_0_0_ap_fixed_14_7_5_3_0_config8_s_fu_288    |                  qnn_qnn_axi_0_0_qnn_axi_dense_latency_ap_ufixed_4_0_4_0_0_ap_fixed_14_7_5_3_0_config8_s |        978 |        978 |       0 |    0 |  183 |      0 |      0 |    0 |          0 |
+|           grp_softmax_stable_ap_fixed_ap_fixed_16_6_5_3_0_softmax_config10_s_fu_324     |                   qnn_qnn_axi_0_0_qnn_axi_softmax_stable_ap_fixed_ap_fixed_16_6_5_3_0_softmax_config10_s |        170 |        170 |       0 |    0 |  121 |      0 |      4 |    0 |          5 |
+|             (grp_softmax_stable_ap_fixed_ap_fixed_16_6_5_3_0_softmax_config10_s_fu_324) |                   qnn_qnn_axi_0_0_qnn_axi_softmax_stable_ap_fixed_ap_fixed_16_6_5_3_0_softmax_config10_s |        102 |        102 |       0 |    0 |  121 |      0 |      1 |    0 |          0 |
+|             exp_table_U                                                                 | qnn_qnn_axi_0_0_qnn_axi_softmax_stable_ap_fixed_ap_fixed_16_6_5_3_0_softmax_config10_s_exp_table_ROM_bkb |         52 |         52 |       0 |    0 |    0 |      0 |      2 |    0 |          0 |
++-----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+------------+------------+---------+------+------+--------+--------+------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

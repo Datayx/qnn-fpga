@@ -1,0 +1,24 @@
+# Large, regenerable build outputs
+# hls4ml/Vitis projects (synth.py, ~2.5 GB)
+hls/
+# qnn_axi HLS project, golden binary (deploy/run_axi.sh, deploy/run_golden.sh)
+deploy/build/
+# test vectors + golden outputs (deploy/export_testvec.py + deploy/run_golden.sh)
+deploy/testvec/
+# bitstream (deploy/run_bd.sh); .hwh and reports are kept
+deploy/overlay/*.bit
+.Xil/
+cong/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs and tool droppings
+*.log
+hs_err_pid*
+clockInfo.txt
+iter_*_CongestedCLBsAndNets.txt
+
+# Local tooling
+.claude/

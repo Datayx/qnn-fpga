@@ -1,0 +1,5 @@
+SEG_axi_gpio_0_Reg 0x00A0000000 0x0000010000
+SEG_qnn_axi_0_Reg 0x00A0010000 0x0000010000
+core_clk_hz 199998000
+clocks_ns clk_pl_0=10.000 clk_pl_1=10.000 qnn_i/clk_wiz/inst/clk_in1=10.000 clk_out1_qnn_clk_wiz_0=5.000
+wns_ns 0.306

@@ -83,7 +83,7 @@ def load():
     return sweep, hw.sort_values(["reuse", "seed"])
 
 
-# Headline sculpting metric (see HANDOFF.md): each model vs the float models of all OTHER seeds,
+# Headline sculpting metric (see README / sweep.add_vs_float): each model vs the float models of all OTHER seeds,
 # so the float row is a like-for-like noise floor. Older sweep.csv files only have the next-seed version.
 def sculpt_col(sweep):
     return "sculpt_jsd_vs_float_xseed" if "sculpt_jsd_vs_float_xseed" in sweep else "sculpt_jsd_vs_float"

@@ -116,7 +116,7 @@ python deploy/parse_board.py results/board_*.txt               # -> results/boar
 | `analyze.py`, `plots.py`, `reliability.py` | statistics and figures |
 | `deploy/` | AXI wrapper, block design, golden model, board drivers and benchmarks |
 | `results/` | all numbers behind this README |
-| `HANDOFF.md`, `DEPLOY.md` | project log and deployment plan |
+| `DEPLOY.md` | deployment plan and status |
 
 ## Limitations
 

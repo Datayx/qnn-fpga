@@ -2,7 +2,7 @@
 # Resume the hardware pipeline after a reboot/shutdown. Safe to call any number of times:
 #  - exits if the pipeline already finished (results/.hw_done) or is already running (flock);
 #  - synth.py / impl.py skip configs already in results/hw.csv / results/impl.csv.
-# Called at Windows logon by the scheduled task "qnn-fpga resume" (see HANDOFF.md).
+# Called at Windows logon by a local scheduled task ("qnn-fpga resume"), if one is set up.
 cd "$(dirname "$0")"
 [ -f results/.overnight_done ] && exit 0
 exec 9> /tmp/qnn_hw.lock

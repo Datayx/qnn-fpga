@@ -1,0 +1,4 @@
+validation: 166000 events, 0 output mismatches vs golden -> PASS
+board accuracy: 0.7237
+on-chip cycles (ap_start..ap_done incl.): min 15 max 15 -> 75.0 ns at 199.998 MHz
+FPGA end-to-end (n=100000): median 1650 ns, p99 1840 ns, loop mean 1579 ns, timer overhead ~70 ns

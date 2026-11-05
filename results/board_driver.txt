@@ -1,0 +1,5 @@
+IPs: ['axi_gpio_0', 'qnn_axi_0', 'zynq_ps']
+gpio @ 0xa0000000, qnn_axi @ 0xa0010000
+2000 events: 0 events differ from golden -> PASS
+accuracy on these events: 0.7065 (golden: 0.7065)
+on-chip cycles: min 15 max 15 -> 75.0 ns

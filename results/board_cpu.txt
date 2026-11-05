@@ -1,0 +1,2 @@
+CPU accuracy: 0.7241, argmax agreement with FPGA golden: 0.9924 (n=166000)
+CPU batch-1 (n=100000): median 2010 ns, p99 2350 ns, loop mean 1820 ns, timer overhead ~70 ns

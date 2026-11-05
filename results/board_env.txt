@@ -1,0 +1,9 @@
+﻿date: 2026-11-05T19:00:37+00:00
+os: Ubuntu 22.04.4 LTS
+kernel: 5.15.0-1027-xilinx-zynqmp
+pynq: 3.0.1
+gcc: 11.4.0
+cpu_governor: userspace
+cpu_freq_khz: 1333333
+pinned_core: 3
+bench_flags: gcc -O2, cpu_bench_flags: gcc -O3 -mcpu=cortex-a53

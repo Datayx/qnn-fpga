@@ -1,0 +1,16 @@
+metric,value,unit,source
+driver_events_differ,0.0,events,results\board_driver.txt
+validation_mismatches,0.0,outputs,results\board_bench.txt
+validation_events,166000.0,events,results\board_bench.txt
+board_accuracy,0.7237,,results\board_bench.txt
+onchip_cycles_min,15.0,cycles,results\board_bench.txt
+onchip_cycles_max,15.0,cycles,results\board_bench.txt
+onchip_latency,75.0,ns,results\board_bench.txt
+fpga_e2e_median,1650.0,ns,results\board_bench.txt
+fpga_e2e_p99,1840.0,ns,results\board_bench.txt
+fpga_e2e_loop_mean,1579.0,ns,results\board_bench.txt
+cpu_accuracy,0.7241,,results\board_cpu.txt
+cpu_fpga_argmax_agreement,0.9924,,results\board_cpu.txt
+cpu_median,2010.0,ns,results\board_cpu.txt
+cpu_p99,2350.0,ns,results\board_cpu.txt
+cpu_loop_mean,1820.0,ns,results\board_cpu.txt

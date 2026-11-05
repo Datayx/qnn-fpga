@@ -50,6 +50,8 @@ ReuseFactor 2 it fits on paper (837 DSPs) but did not route at 5 ns within 2 h o
 
 ## On-board deployment (KR260)
 
+**Result: bit-exact on the board, 75 ns on-chip vs 2.01 µs on the ARM CPU (27×); 1.65 µs end to end.**
+
 The 4-bit model is wrapped with an AXI-Lite interface and built into a full KR260 design
 (Zynq MPSoC → SmartConnect → core, plus an on-chip cycle counter): see [DEPLOY.md](DEPLOY.md) and `deploy/`.
 
@@ -60,10 +62,18 @@ The 4-bit model is wrapped with an AXI-Lite interface and built into a full KR26
 | Full design timing | met at 200 MHz, WNS +0.306 ns |
 | Full design resources | 15,479 LUT (13%), 4,666 FF, 5 DSP, 4 RAMB18 |
 | Golden model (hls4ml C++, all test events) | accuracy 0.7237 (Keras: 0.7241) |
-| On-board bit-exact validation | *pending board run* |
-| On-board on-chip latency (cycle counter) | *pending board run* |
-| On-board end-to-end latency, batch 1 | *pending board run* |
-| ARM Cortex-A53 latency, same network | *pending board run* |
+| **On-board bit-exact validation** | **166,000 / 166,000 events, 0 output mismatches**; board accuracy 0.7237 |
+| **On-chip latency** (cycle counter, ap_start → ap_done) | **15 cycles = 75 ns** at 200 MHz, identical for every event |
+| **End-to-end latency, batch 1** (ARM → AXI-Lite → FPGA → ARM, C driver) | **median 1.65 µs**, p99 1.84 µs |
+| **ARM Cortex-A53 @ 1.33 GHz**, same network in C (-O3) | **median 2.01 µs**, p99 2.35 µs (accuracy 0.7241) |
+
+Measured on the board ([results/board.csv](results/board.csv), raw output in `results/board_*.txt`,
+environment in [results/board_env.txt](results/board_env.txt)): the FPGA computes one inference in 75 ns,
+**27× faster than the A53**. Driven from the ARM one event at a time, the ~11 AXI-Lite register accesses
+dominate, and end to end the FPGA is only **1.2× faster** (1.65 vs 2.01 µs). The 75 ns figure is the
+relevant one when the data arrives in the fabric (e.g. a trigger path); for CPU-fed use, batching or
+streaming (AXI-Stream + DMA) would be needed to expose it. Latencies are per call over 100,000 events on a
+pinned core, timer overhead ~70 ns included.
 
 ## Reproduce
 

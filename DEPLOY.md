@@ -1,6 +1,9 @@
 # KR260 deployment plan
 
-**Status (2026-11-04):** steps 1-2 done on the PC, step 3 needs the board.
+**Status (2026-11-05): done.** Board run: bit-exact on all 166,000 events, on-chip 75 ns, end-to-end
+1.65 us (median), ARM A53 2.01 us; see README "On-board deployment" and results/board.csv.
+
+Earlier status (2026-11-04): steps 1-2 done on the PC, step 3 needs the board.
 - Step 1: `deploy/run_axi.sh` -> qnn_axi IP, C-sim bit-exact 2000/2000, 14 cycles (70 ns), ap_ctrl_hs wires.
 - Step 2: `deploy/run_bd.sh` -> `deploy/overlay/qnn.{bit,hwh}`, timing met at 200 MHz (WNS +0.306 ns),
   15.5k LUT / 4.7k FF / 5 DSP / 4 RAMB18 total (core 14.9k LUT). Rerun export only: `export_overlay.tcl`.

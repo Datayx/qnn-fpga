@@ -6,9 +6,17 @@ Leaves the bitstream loaded, so bench.c can run afterwards.
 """
 import argparse
 import os
+import sys
 
-import numpy as np
-from pynq import MMIO, Overlay
+# sudo strips the environment; restore what Kria-PYNQ's /etc/profile.d/pynq_venv.sh sets up.
+os.environ.setdefault("XILINX_XRT", "/usr")
+os.environ.setdefault("BOARD", "KR260")
+# venv bin first (as `activate` does): PYNQ shells out to xclbinutil, and sudo's secure_path would
+# otherwise pick /usr/bin/xclbinutil, an XRT wrapper that fails silently on this image.
+os.environ["PATH"] = os.path.dirname(sys.executable) + os.pathsep + os.environ.get("PATH", "")
+
+import numpy as np  # noqa: E402
+from pynq import MMIO, Overlay  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GPIO_GO, GPIO_STATUS = 0x0, 0x8

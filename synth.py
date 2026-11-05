@@ -61,6 +61,12 @@ def make_config(model, reuse=1):
         if "ReuseFactor" in layer_cfg:
             layer_cfg["ReuseFactor"] = reuse
     cfg["LayerName"][model.layers[0].name]["Precision"] = {"result": INPUT_PRECISION}
+    # Unquantised (float -> ptq16) models only: 'auto' makes the logits fixed<38,18>, and hls4ml's softmax
+    # indexes its exp table with the top bits of that type, so logits in [-5, 7] all hit one entry and every
+    # output becomes 0.2. Pin the softmax input to the default precision. QKeras models keep 'auto'
+    # (their logits are narrow, e.g. fixed<14,7>), so the deployed hardware configuration is unchanged.
+    if not any(type(layer).__name__.startswith("Q") for layer in model.layers):
+        cfg["LayerName"]["out"]["Precision"]["result"] = DEFAULT_PRECISION
     return cfg
 
 

@@ -24,6 +24,8 @@ deploy/build/**
 !deploy/build/qnn_axi_prj/solution1/syn/report/qnn_axi_csynth.rpt
 !deploy/build/qnn_axi_prj/solution1/syn/report/qnn_axi_csynth.xml
 
+# calibration cache: logits, variant models, csim outputs (calibrate.py, calib_hls.py)
+cache/
 # test vectors + golden outputs (deploy/export_testvec.py + deploy/run_golden.sh, ~16 MB)
 deploy/testvec/
 # bitstream (deploy/run_bd.sh, ~8 MB); .hwh, reports and address map are kept

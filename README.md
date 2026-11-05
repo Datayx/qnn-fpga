@@ -54,6 +54,50 @@ quantisation adds a small further distortion at 3–4 bits:
 
 ![QCD mass after cut](plots/mass_after_cut.png)
 
+### Post-hoc calibration: does temperature scaling close the gap?
+
+**No.** Temperature scaling lowers ECE at every bit width, but float improves by a similar amount, so the
+quantised-vs-float gap at 4 and 3 bits remains; and on hardware the softmax approximation is a bigger
+calibration error than quantisation itself. Full tables: [results/calib_summary.md](results/calib_summary.md).
+
+Setup ([calibrate.py](calibrate.py)): one temperature T per model (all 60), fitted by NLL on the Keras
+validation split, i.e. the last 20% of the training arrays that `model.fit(validation_split=0.2)` held out.
+**That split was also used for early stopping**, so it is not independent of model selection; the test set is
+used only for evaluation. Three variants: continuous T (needs a multiplier in hardware); T rounded to the
+nearest power of two, folded into the output layer as a binary-point shift (exact, free in hardware); and
+1/T folded into the output-layer weights and re-quantised at the same bit width, with the integer part widened
+just enough to avoid clipping. Paired Wilcoxon over seeds, Holm-corrected; 95% CIs from a seed bootstrap.
+
+| bits | ECE before | continuous T | gap to calibrated float | folded + re-quantised |
+|---|---|---|---|---|
+| float | 0.0049 ± 0.0011 | 0.0035 ± 0.0009 | – | 0.0035 ± 0.0009 |
+| 6 | 0.0046 ± 0.0019 | 0.0037 ± 0.0008 | +0.0002 (p_Holm = 1) | 0.0045 ± 0.0014 |
+| 4 | 0.0092 ± 0.0063 | 0.0063 ± 0.0024 | **+0.0028** (p_Holm = 0.020) | 0.0206 ± 0.0143 |
+| 3 | 0.0117 ± 0.0054 | 0.0089 ± 0.0052 | **+0.0053** (p_Holm = 0.020) | 0.0511 ± 0.0226 |
+
+- **Continuous T helps a little.** ECE falls by 0.0009–0.0029 (seed-bootstrap 95% CIs exclude zero at every
+  bit width), significant after Holm only for float (p_Holm = 0.035); accuracy is unchanged by construction
+  (asserted), and NLL/Brier move by ≤ 0.0004.
+- **The gap does not close.** After calibration, 4- and 3-bit ECE is still significantly above calibrated float;
+  the change in the gap is not significant (4 bits: −0.0015, 95% CI [−0.0051, +0.0008]). A single temperature
+  cannot fix the 3-bit models' confidence-dependent miscalibration (under-confident at high confidence): it
+  shifts the whole curve, trading mid-range for high-range error.
+- **A power-of-two temperature is a no-op here.** All 60 fitted T lie in [0.93, 1.03], so the nearest power of
+  two is 1; a binary-point shift can only rescale logits by factors of 2.
+- **Folding T into the weights and re-quantising backfires at low precision.** For T < 1 the scaled weights
+  need one more integer bit, which costs one fractional bit at fixed width: 3-bit ECE rises from 0.0117 to
+  0.0511 (p_Holm = 0.023) and 3.6% of predictions change.
+- **On hardware the softmax approximation dominates.** hls4ml's lookup-table softmax outputs sum to 1.08 on
+  average (range 0.996–1.25), raising mean confidence from about 0.72 to 0.78 at unchanged accuracy. In
+  fixed-point C simulation of the seed-0 models (bit-exact with the board for the deployed 4-bit model), raw
+  ECE is 0.051–0.074 at every precision, including the 16-bit post-training-quantised float model, versus
+  0.004–0.013 in Keras; dividing the outputs by their sum brings it back to 0.007–0.011. For calibrated outputs
+  on this hardware, renormalising (or a more accurate softmax) matters far more than temperature.
+
+![ECE before/after temperature scaling](plots/calib_ece_vs_bits.png)
+
+![Calibration gap before/after](plots/calib_reliability.png)
+
 **Hardware notes.** HLS C-synthesis overestimates LUTs by ~2.4× versus post-route (3-bit: 28.7k vs 11.9k),
 so post-route numbers are quoted. 16-bit needs more DSPs than the device has at ReuseFactor 1; at
 ReuseFactor 2 it fits on paper (837 DSPs) but did not route at 5 ns within 2 h on a 14 GB laptop.
@@ -97,6 +141,9 @@ python sweep.py                 # train 60 models, metrics  -> results/sweep.csv
 python analyze.py               # summaries, paired tests, figures/
 python plots.py                 # plots/relative_change, metrics_vs_bits, mass_after_cut
 python reliability.py           # plots/reliability.png
+python calibrate.py --keras     # temperature fits + variants for all 60 models (cache/calib/)
+bash run_calib_hls.sh           # hls4ml fixed-point outputs of the seed-0 variants                 (WSL)
+python calibrate.py --report    # results/calib*.{csv,md}, plots/calib_*.png
 bash run_synth.sh               # hls4ml + Vitis HLS per bit width -> results/hw.csv     (WSL)
 bash run_impl.sh                # Vivado OOC place & route         -> results/impl.csv   (WSL)
 
@@ -114,6 +161,7 @@ python deploy/parse_board.py results/board_*.txt               # -> results/boar
 | `sweep.py` | data split, models, training, accuracy/AUC/ECE/sculpting |
 | `synth.py`, `impl.py`, `vivado_impl.tcl` | hls4ml conversion, HLS synthesis, out-of-context place & route |
 | `analyze.py`, `plots.py`, `reliability.py` | statistics and figures |
+| `calibrate.py`, `calib_hls.py` | post-hoc temperature calibration (Keras and hls4ml fixed point) |
 | `deploy/` | AXI wrapper, block design, golden model, board drivers and benchmarks |
 | `results/` | all numbers behind this README |
 | `DEPLOY.md` | deployment plan and status |

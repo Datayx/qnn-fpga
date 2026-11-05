@@ -1,0 +1,4 @@
+timer overhead ~73 ns per clock_gettime
+base           (n=100000): median 90 ns, p99 350 ns, loop mean 30.6 ns
+renorm         (n=100000): median 110 ns, p99 300 ns, loop mean 49.2 ns
+softmax_logits (n=100000): median 330 ns, p99 480 ns, loop mean 273.4 ns

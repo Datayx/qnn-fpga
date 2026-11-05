@@ -20,6 +20,11 @@ sudo taskset -c 3 ./bench ../testvec            # all events bit-exact + FPGA en
 gcc -O3 -mcpu=cortex-a53 -o cpu_bench cpu_bench.c -lm
 taskset -c 3 ./cpu_bench ../testvec             # ARM baseline, same network
 ```
+Softmax post-processing cost on the A53 (needs testvec/logits_q.bin from the skip-softmax csim):
+```
+gcc -O3 -mcpu=cortex-a53 -o arm_post arm_post.c -lm
+taskset -c 3 ./arm_post ../testvec              # base / renormalise / softmax-from-logits, ns per event
+```
 Optional for steadier numbers: `sudo cpupower frequency-set -g performance` before benchmarking.
 
 ## Expected

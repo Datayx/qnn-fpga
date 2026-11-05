@@ -98,6 +98,66 @@ just enough to avoid clipping. Paired Wilcoxon over seeds, Holm-corrected; 95% C
 
 ![Calibration gap before/after](plots/calib_reliability.png)
 
+### hls4ml softmax: the hardware's calibration error has a one-type fix
+
+**Cause.** hls4ml's `stable` softmax looks up `exp(x)` and `1/Σexp` in tables indexed by the **top 10 bits** of
+each table's input type. By default the 1/Σ lookup is addressed through `inv_inp_t = fixed<18,8>`: sign,
+7 integer bits and only 2 fractional bits, i.e. 0.25-wide bins over a sum that always lies in [1, 5]. The
+outputs then sum to 1.08 on average (0.996–1.249) and every probability is inflated.
+([softmax_study.py](softmax_study.py), [results/softmax_summary.md](results/softmax_summary.md))
+
+**Across seeds** (deployed configuration, 10 seeds each, paired Wilcoxon, Holm): raw hardware ECE is
+0.057 ± 0.009 at 4 bits and 0.058 ± 0.005 for the float model quantised post-training, against 0.009 / 0.005
+in Keras. Raw minus renormalised ECE is +0.047 (4-bit) and +0.052 (float), p = 0.002 for both (the smallest
+p attainable with 10 pairs; p_Holm = 0.004). Renormalised ECE is indistinguishable from Keras (95% CIs include 0).
+
+**Config sweep** (4-bit seed 0, all 166,000 test events; Keras ECE of this model 0.0128):
+
+| softmax config | output sum [min, max] | ECE (raw) | cycles | HLS LUT / BRAM_18K | post-route LUT, WNS @ 200 MHz |
+|---|---|---|---|---|---|
+| A deployed default | 1.085 [0.996, 1.249] | 0.0735 | 13 | 38,360 / 4 | 16,114, +0.041 ns |
+| B table size 4096 | 1.021 [0.996, 1.062] | 0.0300 | 13 | 38,392 / 13 | – |
+| **C `inv_inp_t` = `ufixed<18,3>`** | **1.000 [0.995, 1.006]** | **0.0105** | **13** | **38,360 / 4** | **16,070, +0.211 ns** |
+| D C + table values `ufixed<18,1>` | 1.000 [0.996, 1.007] | 0.0102 | 13 | 38,519 / 4 | – |
+| E D + table size 4096 | 0.998 [0.996, 1.001] | 0.0120 | 13 | 38,519 / 16 | – |
+| F `latency` implementation | 1.009 [0.938, 1.079] | 0.0189 | 11 | 38,327 / 4 | – |
+| G softmax skipped (logits out) | – | 0.0126 (exact softmax on ARM) | 6 | 37,817 / 0 | – |
+
+**The fix holds across seeds:** with config C, 4-bit raw ECE is 0.0093 ± 0.0071 over 10 seeds, versus
+0.0092 ± 0.0063 in Keras (difference +0.0001, 95% CI [−0.0009, +0.0011]) and −0.048 versus the deployed
+default (p_Holm = 0.004). It costs nothing measurable: identical HLS latency and resources, and post-route
+16,070 vs 16,114 LUTs with the same FF/DSP/BRAM, timing met (the slack difference is within place-and-route
+variation). The deployed softmax also cost 0.002 of top-tag AUC (0.9363 vs 0.9381), which C recovers.
+
+**Which fix, at what cost** (ARM numbers measured on the KR260's A53 @ 1.33 GHz, loop mean per event,
+[results/board_arm_post.txt](results/board_arm_post.txt)):
+
+| fix | ECE (4-bit) | extra FPGA cost | extra ARM time | usable if data stays in the fabric |
+|---|---|---|---|---|
+| (i) renormalise outputs on the ARM | 0.0099 ± 0.0074 | none (no rebuild) | +19 ns (49 vs 31 ns) | no |
+| (ii) `inv_inp_t` = `ufixed<18,3>` (config C) | 0.0093 ± 0.0071 | none | 0 | **yes** |
+| (iii) skip softmax, exact softmax on the ARM | 0.0126 (seed 0) | saves 7 of 13 cycles, 5 DSP, 4 BRAM_18K | +243 ns (273 vs 31 ns) | no |
+
+Recommendation: **(ii)**, rebuilding with the wider-resolution 1/Σ lookup input, is free in hardware and
+fixes calibration at the source, including trigger-style data paths that never reach a CPU. (i) is the
+zero-rebuild patch for an existing bitstream such as the one deployed here. (iii) saves FPGA latency and
+DSPs, but on this board the A53 spends ~240 ns on the softmax, far more than the 35 ns it saves on chip.
+
+**Caveat for hls4ml 1.3.0 users:** softmax table types given in the layer config (`Precision: inv_inp /
+exp_table / inv_table / accum`) are **silently ignored**; the Softmax layer never reads them, and only
+`TableSize`, `Implementation` and `Skip` take effect. Config C was applied by editing the converted node
+(`hls_model.graph[<softmax>].get_attr('inv_inp_t').precision`) before `compile()`, and checked in the
+generated `defines.h`.
+
+**Upstream status** (fastmachinelearning/hls4ml, checked 2026-11-05): v1.3.0 (March 2026) is the latest
+release and ships these `fixed<18,8>` defaults. Issue
+[#1512](https://github.com/fastmachinelearning/hls4ml/issues/1512) (open) reports silent argmax flips from the
+softmax lookup tables in 1.3.0 and suggests the skip-softmax workaround; a fix raising the 1/x-table input
+width ([#1513](https://github.com/fastmachinelearning/hls4ml/pull/1513)) was closed without merging. Maintainer
+PR [#1542](https://github.com/fastmachinelearning/hls4ml/pull/1542) (open, not merged or released) makes the
+stable-softmax table types inferred (`auto`) and fixes the configuration path that "had no effect". I found
+no report of the outputs not summing to 1 or of the effect on calibration.
+
 **Hardware notes.** HLS C-synthesis overestimates LUTs by ~2.4× versus post-route (3-bit: 28.7k vs 11.9k),
 so post-route numbers are quoted. 16-bit needs more DSPs than the device has at ReuseFactor 1; at
 ReuseFactor 2 it fits on paper (837 DSPs) but did not route at 5 ns within 2 h on a 14 GB laptop.
@@ -144,6 +204,10 @@ python reliability.py           # plots/reliability.png
 python calibrate.py --keras     # temperature fits + variants for all 60 models (cache/calib/)
 bash run_calib_hls.sh           # hls4ml fixed-point outputs of the seed-0 variants                 (WSL)
 python calibrate.py --report    # results/calib*.{csv,md}, plots/calib_*.png
+bash run_softmax.sh configs --synth                          # softmax configs A-G: csim + HLS (WSL)
+bash run_softmax.sh seeds --config A_default --bits 4 float  # seeds 0-9 (also --config C_invinp --bits 4)
+bash run_softmax.sh impl --configs A_default C_invinp        # post-route
+bash run_softmax.sh report                                   # results/softmax_*.{csv,md}
 bash run_synth.sh               # hls4ml + Vitis HLS per bit width -> results/hw.csv     (WSL)
 bash run_impl.sh                # Vivado OOC place & route         -> results/impl.csv   (WSL)
 
@@ -162,6 +226,7 @@ python deploy/parse_board.py results/board_*.txt               # -> results/boar
 | `synth.py`, `impl.py`, `vivado_impl.tcl` | hls4ml conversion, HLS synthesis, out-of-context place & route |
 | `analyze.py`, `plots.py`, `reliability.py` | statistics and figures |
 | `calibrate.py`, `calib_hls.py` | post-hoc temperature calibration (Keras and hls4ml fixed point) |
+| `softmax_study.py` | hls4ml softmax configurations: calibration, resources, seeds |
 | `deploy/` | AXI wrapper, block design, golden model, board drivers and benchmarks |
 | `results/` | all numbers behind this README |
 | `DEPLOY.md` | deployment plan and status |

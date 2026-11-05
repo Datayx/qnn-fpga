@@ -1,0 +1,110 @@
+Backend: Vitis
+ClockPeriod: 5
+ClockUncertainty: 27%
+HLSConfig:
+  LayerName:
+    activation_30:
+      Implementation: stable
+      Precision:
+        accum: fixed<18,8,RND,SAT,0>
+        exp_table: fixed<18,8,RND,SAT,0>
+        inv_inp: fixed<18,8,RND,SAT,0>
+        inv_table: fixed<18,8,RND,SAT,0>
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      Skip: false
+      TableSize: 1024
+      Trace: false
+    fc0:
+      Precision:
+        accum: auto
+        bias: fixed<6,1,TRN,WRAP,0>
+        result: auto
+        weight: fixed<6,1,TRN,WRAP,0>
+      ReuseFactor: 1
+      Trace: false
+    fc0_linear:
+      Precision:
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: false
+    fc1:
+      Precision:
+        accum: auto
+        bias: fixed<6,1,TRN,WRAP,0>
+        result: auto
+        weight: fixed<6,1,TRN,WRAP,0>
+      ReuseFactor: 1
+      Trace: false
+    fc1_linear:
+      Precision:
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: false
+    input_31:
+      Precision:
+        result: ap_fixed<16,6>
+      Trace: false
+    out:
+      Precision:
+        accum: auto
+        bias: fixed<6,1,TRN,WRAP,0>
+        result: auto
+        weight: fixed<6,1,TRN,WRAP,0>
+      ReuseFactor: 1
+      Trace: false
+    out_linear:
+      Precision:
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: false
+    relu0:
+      Precision:
+        result: ufixed<6,0,RND_CONV,SAT,0>
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: false
+    relu1:
+      Precision:
+        result: ufixed<6,0,RND_CONV,SAT,0>
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: false
+  Model:
+    BitExact: null
+    BramFactor: 1000000000
+    Precision:
+      default: ap_fixed<16,6>
+    ReuseFactor: 1
+    Strategy: Latency
+    TraceOutput: false
+IOType: io_parallel
+InputData: null
+InputShapes:
+  input_31:
+  - 15
+KerasModel: !keras_model 'hls/mlp_6b/keras_model.keras'
+OutputDir: hls/mlp_6b
+OutputPredictions: null
+OutputShapes:
+  layer10_out:
+  - 5
+Part: xck26-sfvc784-2LV-c
+ProjectName: myproject
+Stamp: 2780222a
+Version: 1.0.0
+WriterConfig:
+  Namespace: null
+  TBOutputStream: both
+  WriteEmulationConstants: false
+  WriteTar: false
+  WriteWeightsTxt: true

@@ -1,11 +1,29 @@
-# Large, regenerable build outputs
-# hls4ml/Vitis projects (synth.py, ~2.5 GB)
-hls/
-# qnn_axi HLS project, golden binary (deploy/run_axi.sh, deploy/run_golden.sh)
-deploy/build/
-# test vectors + golden outputs (deploy/export_testvec.py + deploy/run_golden.sh)
+# Licenses: never commit (the Xilinx license is node-locked and lives in WSL ~/.Xilinx/, outside the repo)
+*.lic
+
+# hls4ml/Vitis projects (synth.py, impl.py; ~2.5 GB): ignore everything, then re-include the
+# small files that document each build. Git cannot re-include a file whose parent directory is
+# ignored, so directories are re-included first (hls/**/) and only files stay ignored.
+hls/**
+!hls/**/
+# conversion settings
+!hls/*/hls4ml_config.yml
+# HLS C-synthesis summary (latency, II, resources) for the top function
+!hls/*/myproject_prj/solution1/syn/report/myproject_csynth.rpt
+!hls/*/myproject_prj/solution1/syn/report/myproject_csynth.xml
+# Vivado out-of-context post-route utilisation, timing, route status, WNS summary
+!hls/*/impl/*.rpt
+!hls/*/impl/summary.txt
+
+# qnn_axi wrapper HLS project + golden binary (deploy/run_axi.sh, deploy/run_golden.sh): same scheme
+deploy/build/**
+!deploy/build/**/
+!deploy/build/qnn_axi_prj/solution1/syn/report/qnn_axi_csynth.rpt
+!deploy/build/qnn_axi_prj/solution1/syn/report/qnn_axi_csynth.xml
+
+# test vectors + golden outputs (deploy/export_testvec.py + deploy/run_golden.sh, ~16 MB)
 deploy/testvec/
-# bitstream (deploy/run_bd.sh); .hwh and reports are kept
+# bitstream (deploy/run_bd.sh, ~8 MB); .hwh, reports and address map are kept
 deploy/overlay/*.bit
 .Xil/
 cong/

@@ -1,0 +1,175 @@
+
+
+================================================================
+== Vitis HLS Report for 'qnn_axi'
+================================================================
+* Date:           Wed Nov  4 18:12:56 2026
+
+* Version:        2026.1 (Build 6493734 on Jun 16 2026)
+* Project:        qnn_axi_prj
+* Solution:       solution1
+* Product family: zynquplus
+* Target device:  xck26-sfvc784-2LV-c
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+---------+----------+------------+
+    |  Clock |  Target | Estimated| Uncertainty|
+    +--------+---------+----------+------------+
+    |ap_clk  |  5.00 ns|  3.643 ns|     1.35 ns|
+    +--------+---------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+-----------+-----------+-----+-----+---------+
+    |  Latency (cycles) |   Latency (absolute)  |  Interval | Pipeline|
+    |   min   |   max   |    min    |    max    | min | max |   Type  |
+    +---------+---------+-----------+-----------+-----+-----+---------+
+    |       14|       14|  70.000 ns|  70.000 ns|    1|    1|      yes|
+    +---------+---------+-----------+-----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        +----------------------+-----------+---------+---------+-----------+-----------+-----+-----+---------+
+        |                      |           |  Latency (cycles) |   Latency (absolute)  |  Interval | Pipeline|
+        |       Instance       |   Module  |   min   |   max   |    min    |    max    | min | max |   Type  |
+        +----------------------+-----------+---------+---------+-----------+-----------+-----+-----+---------+
+        |grp_myproject_fu_153  |myproject  |       13|       13|  65.000 ns|  65.000 ns|    1|    1|      yes|
+        +----------------------+-----------+---------+---------+-----------+-----------+-----+-----+---------+
+
+        * Loop: 
+        N/A
+
+
+
+================================================================
+== Utilization Estimates
+================================================================
+* Summary: 
++-----------------+---------+------+--------+--------+-----+
+|       Name      | BRAM_18K|  DSP |   FF   |   LUT  | URAM|
++-----------------+---------+------+--------+--------+-----+
+|DSP              |        -|     -|       -|       -|    -|
+|Expression       |        -|     -|       0|       2|    -|
+|FIFO             |        -|     -|       -|       -|    -|
+|Instance         |        4|     5|    4280|   39058|    0|
+|Memory           |        -|     -|       -|       -|    -|
+|Multiplexer      |        -|     -|       -|       -|    -|
+|Register         |        -|     -|     256|       -|    -|
++-----------------+---------+------+--------+--------+-----+
+|Total            |        4|     5|    4536|   39060|    0|
++-----------------+---------+------+--------+--------+-----+
+|Available        |      288|  1248|  234240|  117120|   64|
++-----------------+---------+------+--------+--------+-----+
+|Utilization (%)  |        1|    ~0|       1|      33|    0|
++-----------------+---------+------+--------+--------+-----+
+
++ Detail: 
+    * Instance: 
+    +----------------------+------------+---------+----+------+-------+-----+
+    |       Instance       |   Module   | BRAM_18K| DSP|  FF  |  LUT  | URAM|
+    +----------------------+------------+---------+----+------+-------+-----+
+    |ctrl_s_axi_U          |ctrl_s_axi  |        0|   0|   448|    744|    0|
+    |grp_myproject_fu_153  |myproject   |        4|   5|  3832|  38314|    0|
+    +----------------------+------------+---------+----+------+-------+-----+
+    |Total                 |            |        4|   5|  4280|  39058|    0|
+    +----------------------+------------+---------+----+------+-------+-----+
+
+    * DSP: 
+    N/A
+
+    * Memory: 
+    N/A
+
+    * FIFO: 
+    N/A
+
+    * Expression: 
+    +---------------+----------+----+---+----+------------+------------+
+    | Variable Name | Operation| DSP| FF| LUT| Bitwidth P0| Bitwidth P1|
+    +---------------+----------+----+---+----+------------+------------+
+    |ap_enable_pp0  |       xor|   0|  0|   2|           1|           2|
+    +---------------+----------+----+---+----+------------+------------+
+    |Total          |          |   0|  0|   2|           1|           2|
+    +---------------+----------+----+---+----+------------+------------+
+
+    * Multiplexer: 
+    N/A
+
+    * Register: 
+    +-----------------------------------+----+----+-----+-----------+
+    |                Name               | FF | LUT| Bits| Const Bits|
+    +-----------------------------------+----+----+-----+-----------+
+    |ap_CS_fsm                          |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter1            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter10           |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter11           |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter12           |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter13           |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter14           |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter2            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter3            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter4            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter5            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter6            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter7            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter8            |   1|   0|    1|          0|
+    |ap_enable_reg_pp0_iter9            |   1|   0|    1|          0|
+    |grp_myproject_fu_153_ap_start_reg  |   1|   0|    1|          0|
+    |x_10_reg_337                       |  16|   0|   16|          0|
+    |x_11_reg_347                       |  16|   0|   16|          0|
+    |x_12_reg_357                       |  16|   0|   16|          0|
+    |x_13_reg_362                       |  16|   0|   16|          0|
+    |x_14_reg_367                       |  16|   0|   16|          0|
+    |x_15_reg_377                       |  16|   0|   16|          0|
+    |x_1_reg_312                        |  16|   0|   16|          0|
+    |x_2_reg_372                        |  16|   0|   16|          0|
+    |x_3_reg_322                        |  16|   0|   16|          0|
+    |x_5_reg_332                        |  16|   0|   16|          0|
+    |x_6_reg_317                        |  16|   0|   16|          0|
+    |x_7_reg_342                        |  16|   0|   16|          0|
+    |x_8_reg_327                        |  16|   0|   16|          0|
+    |x_9_reg_352                        |  16|   0|   16|          0|
+    |x_reg_307                          |  16|   0|   16|          0|
+    +-----------------------------------+----+----+-----+-----------+
+    |Total                              | 256|   0|  256|          0|
+    +-----------------------------------+----+----+-----+-----------+
+
+
+
+================================================================
+== Interface
+================================================================
+* Summary: 
++--------------------+-----+-----+------------+--------------+--------------+
+|      RTL Ports     | Dir | Bits|  Protocol  | Source Object|    C Type    |
++--------------------+-----+-----+------------+--------------+--------------+
+|s_axi_ctrl_AWVALID  |   in|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_AWREADY  |  out|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_AWADDR   |   in|    7|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_WVALID   |   in|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_WREADY   |  out|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_WDATA    |   in|   32|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_WSTRB    |   in|    4|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_ARVALID  |   in|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_ARREADY  |  out|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_ARADDR   |   in|    7|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_RVALID   |  out|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_RREADY   |   in|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_RDATA    |  out|   32|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_RRESP    |  out|    2|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_BVALID   |  out|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_BREADY   |   in|    1|       s_axi|          ctrl|       pointer|
+|s_axi_ctrl_BRESP    |  out|    2|       s_axi|          ctrl|       pointer|
+|ap_clk              |   in|    1|  ap_ctrl_hs|       qnn_axi|  return value|
+|ap_rst_n            |   in|    1|  ap_ctrl_hs|       qnn_axi|  return value|
+|ap_start            |   in|    1|  ap_ctrl_hs|       qnn_axi|  return value|
+|ap_done             |  out|    1|  ap_ctrl_hs|       qnn_axi|  return value|
+|ap_idle             |  out|    1|  ap_ctrl_hs|       qnn_axi|  return value|
+|ap_ready            |  out|    1|  ap_ctrl_hs|       qnn_axi|  return value|
++--------------------+-----+-----+------------+--------------+--------------+
+

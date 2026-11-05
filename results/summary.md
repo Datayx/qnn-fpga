@@ -45,3 +45,8 @@ Paired vs same-seed float (Wilcoxon signed-rank, Holm-corrected per metric):
 | ece | 6 | 10 | -0.0003 | -5.0% | 0.77 | 1 |
 | ece | 4 | 10 | +0.0029 | +87.6% | 0.0137 | 0.0547 |
 | ece | 3 | 10 | +0.0063 | +140.1% | 0.00586 | 0.0293 |
+| sculpt_jsd_vs_float_xseed | 16 | 10 | -0.0012 | -1.1% | 0.695 | 1 |
+| sculpt_jsd_vs_float_xseed | 8 | 10 | +0.0004 | +0.3% | 0.492 | 1 |
+| sculpt_jsd_vs_float_xseed | 6 | 10 | +0.0009 | +4.8% | 0.625 | 1 |
+| sculpt_jsd_vs_float_xseed | 4 | 10 | +0.0069 | +30.5% | 0.0273 | 0.109 |
+| sculpt_jsd_vs_float_xseed | 3 | 10 | +0.0203 | +74.3% | 0.00977 | 0.0488 |

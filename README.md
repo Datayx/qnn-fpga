@@ -6,9 +6,16 @@ Besides accuracy, every model is scored on **calibration** (ECE) and **backgroun
 (how much a top-tag cut distorts the QCD jet-mass distribution, the jet mass being withheld from the inputs).
 
 **Answer: no, not in order; yes, in size.** Accuracy is the first metric to move significantly (from 6 bits,
-by 0.1 point). Calibration and sculpting only change at 4 bits and below, but then by far more in relative
-terms: at 3 bits accuracy falls 1.5% while calibration error rises 140% and sculpting 74%, and both become
-strongly seed-dependent. Down to 6 bits the models are indistinguishable from float on reliability.
+by 0.1 point). Calibration and sculpting only move at 4 bits and below, and significantly (after
+multiple-comparison correction) only at 3 bits, but then by far more in relative terms: at 3 bits accuracy
+falls 1.5% while calibration error rises 140% (paired p_Holm = 0.029) and sculpting 74% (cross-seed JSD,
+paired p_Holm = 0.049), and both become strongly seed-dependent. Down to 6 bits the models are
+indistinguishable from float on reliability.
+
+**Deployed on the board:** the **4-bit** model runs on the KR260, bit-exact on all 166,000 test events, in
+**75 ns on chip, 27× faster than the board's ARM Cortex-A53 (2.01 µs)**. Driven from the ARM one event at a
+time it takes 1.65 µs end to end, only **1.2× faster** than the CPU, because bus access dominates
+([details](#on-board-deployment-kr260)).
 
 ![Relative change vs float](plots/relative_change.png)
 
@@ -17,7 +24,7 @@ strongly seed-dependent. Down to 6 bits the models are indistinguishable from fl
 Mean ± std over 10 seeds on the full test split (n = 166,000). Hardware: seed-0 model, ReuseFactor 1,
 xck26 at a 200 MHz target, out-of-context post-route where available (full table: [results/summary.md](results/summary.md)).
 
-| bits | accuracy | ECE | sculpting JSD vs float | latency | clock | LUT | DSP | fits KR260 |
+| bits | accuracy | ECE | sculpting JSD vs float (cross-seed) | latency | clock | LUT | DSP | fits KR260 |
 |---|---|---|---|---|---|---|---|---|
 | float | 0.7282 ± 0.0003 | 0.0049 ± 0.0011 | 0.0233 ± 0.0040 (noise floor) | – | – | – | – | – |
 | 16 | 0.7282 ± 0.0004 | 0.0047 ± 0.0018 | 0.0230 ± 0.0051 | 85 ns | 200 MHz | 82,268 (HLS est.) | 1,617 | **no** (130% of DSPs) |
@@ -28,8 +35,11 @@ xck26 at a 200 MHz target, out-of-context post-route where available (full table
 
 Statistics (paired Wilcoxon vs same-seed float, Holm-corrected per metric; [results/paired_tests.csv](results/paired_tests.csv)):
 accuracy drops significantly from 6 bits (−0.09 / −0.45 / −1.05 points at 6/4/3 bits, p_Holm = 0.010);
-ECE +88% at 4 bits (p_Holm = 0.055, borderline) and +140% at 3 bits (p_Holm = 0.029).
-Sculpting vs the float seed-to-seed noise floor (Mann-Whitney): 4 bits +31% (p = 0.04), 3 bits +74% (p = 0.003).
+ECE +88% at 4 bits (p_Holm = 0.055, borderline) and +140% at 3 bits (p_Holm = 0.029);
+sculpting (cross-seed JSD: each model's after-cut QCD mass shape vs the float models of the *other* seeds,
+so seed s of float and of each bit width share the same reference set) +31% at 4 bits (p = 0.027,
+p_Holm = 0.11, not significant after correction) and +74% at 3 bits (p = 0.0098, p_Holm = 0.049).
+n = 10 seeds per test; the smallest attainable two-sided Wilcoxon p is 0.002.
 
 ![Accuracy vs FPGA cost](figures/pareto.png)
 
@@ -50,9 +60,11 @@ ReuseFactor 2 it fits on paper (837 DSPs) but did not route at 5 ns within 2 h o
 
 ## On-board deployment (KR260)
 
-**Result: bit-exact on the board, 75 ns on-chip vs 2.01 µs on the ARM CPU (27×); 1.65 µs end to end.**
+**Result (4-bit model, seed 0): bit-exact on the board; 75 ns on chip vs 2.01 µs on the ARM CPU (27× faster);
+1.65 µs end to end, i.e. 1.2× faster than the CPU when the ARM drives it one event at a time.**
 
-The 4-bit model is wrapped with an AXI-Lite interface and built into a full KR260 design
+The 4-bit model (seed 0, ReuseFactor 1) was chosen because it keeps accuracy within 0.5 point of float at
+5 DSPs; it is wrapped with an AXI-Lite interface and built into a full KR260 design
 (Zynq MPSoC → SmartConnect → core, plus an on-chip cycle counter): see [DEPLOY.md](DEPLOY.md) and `deploy/`.
 
 | | status |

@@ -149,11 +149,17 @@ def summary(sweep, hw):
 def paired_tests(sweep):
     """Per-seed paired comparison of each bit width against float trained with the same seed.
     Wilcoxon signed-rank (two-sided), n = number of seeds. Holm-corrected within each metric.
-    sculpt_jsd_vs_float is skipped: it is already a distance *to* the same-seed float model."""
+    sculpt_jsd_vs_float is skipped: it is already a distance *to* the same-seed float model.
+    sculpt_jsd_vs_float_xseed is tested: for seed s, both the quantised and the float value are the mean
+    JSD to the float models of the other seeds (o != s), i.e. the same reference set, so pairing by s
+    is valid; the float value is that seed's own noise-floor contribution."""
     from scipy.stats import wilcoxon
     rows = []
     fl = sweep[sweep.bits == "float"].set_index("seed")
-    for metric, better in [("accuracy", "higher"), ("auc_top", "higher"), ("ece", "lower")]:
+    metrics = [("accuracy", "higher"), ("auc_top", "higher"), ("ece", "lower")]
+    if "sculpt_jsd_vs_float_xseed" in sweep:
+        metrics.append(("sculpt_jsd_vs_float_xseed", "lower"))
+    for metric, better in metrics:
         res = []
         for b in [b for b in ORDER[1:] if b in set(sweep.bits)]:
             q = sweep[sweep.bits == b].set_index("seed")

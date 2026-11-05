@@ -87,6 +87,8 @@ Which fix to use:
 
 **Upstream:** related softmax issues are [#1512](https://github.com/fastmachinelearning/hls4ml/issues/1512) (argmax flips) and PR [#1542](https://github.com/fastmachinelearning/hls4ml/pull/1542) (inferred table types, config fix; open). As of 2026-11-05 I couldn't find any report of the sums not being 1 or of the calibration effect.
 
+Reported upstream: https://github.com/fastmachinelearning/hls4ml/pull/1542#issuecomment-6671764227
+
 ## On the board
 
 The 4-bit model (seed 0) keeps accuracy within 0.5 points of float using only 5 DSPs, so that's the one I deployed. It sits behind an AXI-Lite wrapper in a full KR260 design, with an on-chip cycle counter. See [DEPLOY.md](DEPLOY.md).
@@ -101,6 +103,16 @@ The 4-bit model (seed 0) keeps accuracy within 0.5 points of float using only 5 
 | full design | timing met at 200 MHz; 15,479 LUT (13%), 5 DSP |
 
 The 75 ns figure is the one that matters when data arrives in the fabric. When the ARM feeds one event at a time, about 11 register accesses dominate, and streaming (AXI-Stream + DMA) would be needed to close that gap. Raw output: [results/board.csv](results/board.csv).
+
+## Layout
+
+- `sweep.py`: trains all 60 models and scores accuracy, AUC, calibration and sculpting.
+- `synth.py`, `impl.py`: hls4ml conversion, HLS synthesis, and place & route.
+- `analyze.py`: statistics, summary tables and figures.
+- `calibrate.py`: temperature scaling, in Keras and on the hls4ml fixed-point model.
+- `softmax_study.py`: the hls4ml softmax configs, across seeds, with hardware cost.
+- `deploy/`: AXI wrapper, KR260 design, golden model, board driver and benchmarks.
+- `results/`: every number in this README.
 
 ## Reproduce
 
